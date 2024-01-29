@@ -1,26 +1,33 @@
-//todo-control //форма Какие планы?
-//header-input 
-//header-button
-
-//todo-list
-//todo-completed
-
 const todoControl = document.querySelector('.todo-control');
 const headerInput = document.querySelector('.header-input');
 const headerButton = document.querySelector('.header-button');
 const todoList = document.querySelector('.todo-list');
 const todoCompleted = document.querySelector('.todo-completed');
 
-const toDoData = []
+let toDoData = []
+
+const setLocalStorage = function () {
+    localStorage.setItem('toDoDataStored', JSON.stringify(toDoData));
+};
+
+const getLocalStorage = function () {
+    if (localStorage.getItem('toDoDataStored') !== '') {
+        console.log(localStorage.getItem('toDoDataStored'));
+        return JSON.parse(localStorage.getItem('toDoDataStored'));
+    }
+};
 
 const render = function () {
     todoList.innerHTML = '';
     todoCompleted.innerHTML = '';
 
-    toDoData.forEach(function (item) {
-        const li = document.createElement('li')
+    toDoData = getLocalStorage('toDoDataStored');
 
-        li.classList.add('todo-item')
+
+    toDoData.forEach(function (item, i) {
+        const li = document.createElement('li');
+
+        li.classList.add('todo-item');
 
         li.innerHTML = '<span class="text-todo">' + item.text + '</span>' +
             '<div class="todo-buttons">' +
@@ -28,29 +35,47 @@ const render = function () {
             '<button class="todo-complete"></button>' +
             '</div>'
 
-        if (item.completed) {
+        if (item.completed && item.text !== '') {
             todoCompleted.append(li)
-        } else {
+        } else if (!item.completed && item.text !== '') {
             todoList.append(li)
-        }
+        };
 
         li.querySelector('.todo-complete').addEventListener('click', function () {
             item.completed = !item.completed
-            render()
+            setLocalStorage('toDoDataStored');
+            render();
+        });
+
+        li.querySelector('.todo-remove').addEventListener('click', function () {
+            toDoData.splice(i, 1); // возвращает массив без удаленного эл-та по клику на Корзину
+            setLocalStorage('toDoDataStored'); //сохраняет массив без удал.эл-тов в LStorage
+            render();
         })
     })
+    console.log(toDoData);
 }
 
 todoControl.addEventListener('submit', function (event) {
-    event.preventDefault();
+
+    event.preventDefault(); //останавливает перезагрузку страницы после ввода данных + Enter
 
     const newToDo = {
         text: headerInput.value,
         completed: false
     }
-
     toDoData.push(newToDo);
-    headerInput.value = '';
+    headerInput.value = ''; //очищение поля ввода инпута
 
+    setLocalStorage('toDoDataStored');
     render();
 })
+
+
+
+
+
+
+
+
+
