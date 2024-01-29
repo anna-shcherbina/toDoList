@@ -10,11 +10,8 @@ const setLocalStorage = function () {
     localStorage.setItem('toDoDataStored', JSON.stringify(toDoData));
 };
 
-const getLocalStorage = function () {
-    if (localStorage.getItem('toDoDataStored') !== '') {
-        console.log(localStorage.getItem('toDoDataStored'));
-        return JSON.parse(localStorage.getItem('toDoDataStored'));
-    }
+const getLocalStorage = function (str) {
+    return JSON.parse(localStorage.getItem(str) || []);
 };
 
 const render = function () {
@@ -60,17 +57,20 @@ todoControl.addEventListener('submit', function (event) {
 
     event.preventDefault(); //останавливает перезагрузку страницы после ввода данных + Enter
 
-    const newToDo = {
-        text: headerInput.value,
-        completed: false
-    }
-    toDoData.push(newToDo);
-    headerInput.value = ''; //очищение поля ввода инпута
+    if (headerInput.value !== '') {
 
-    setLocalStorage('toDoDataStored');
-    render();
+        const newToDo = {
+            text: headerInput.value,
+            completed: false
+        }
+        toDoData.push(newToDo);
+        headerInput.value = ''; //очищение поля ввода инпута
+
+        setLocalStorage('toDoDataStored');
+        render();
+    };
 })
-
+render();
 
 
 
