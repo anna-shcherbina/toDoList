@@ -11,7 +11,7 @@ const setLocalStorage = function () {
 };
 
 const getLocalStorage = function (str) {
-    return JSON.parse(localStorage.getItem(str) || []);
+    return JSON.parse(localStorage.getItem(str)) || [];
 };
 
 const render = function () {
